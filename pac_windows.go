@@ -1,6 +1,7 @@
 package ieproxy
 
 import (
+	"net/url"
 	"strings"
 	"syscall"
 	"unsafe"
@@ -33,16 +34,19 @@ type tWINHTTP_PROXY_INFO struct {
 	lpszProxyBypass *uint16
 }
 
-func (apc *AutomaticProxyConf) findProxyForURL(URL string) string {
+func (apc *AutomaticProxyConf) findProxyForURL(u *url.URL) (*url.URL, error) {
 	if !apc.Active {
-		return ""
+		return nil, nil
 	}
-	proxy, _ := getProxyForURL(apc.URL, URL)
+	proxy, err := getProxyForURL(apc.URL, u.String())
+	if err != nil {
+		return nil, err
+	}
 	i := strings.Index(proxy, ";")
 	if i >= 0 {
-		return proxy[:i]
+		return url.Parse(proxy[:i])
 	}
-	return proxy
+	return url.Parse(proxy)
 }
 
 func getProxyForURL(pacfileURL, URL string) (string, error) {

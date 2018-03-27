@@ -2,6 +2,10 @@
 
 package ieproxy
 
-func (apc *AutomaticProxyConf) findProxyForURL(URL string) string {
-	return ""
+import (
+	"net/url"
+)
+
+func (apc *AutomaticProxyConf) findProxyForURL(u *url.URL) (*url.URL, error) {
+	return nil, nil
 }
